@@ -104,36 +104,13 @@ export const HtmlRenderer = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header fixo */}
-      <div className="sticky top-0 z-10 bg-background border-b p-2">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => window.history.back()}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar
-            </Button>
-            <div>
-              <h1 className="font-semibold">{file.original_name}</h1>
-              <p className="text-sm text-muted-foreground">Arquivo HTML hospedado</p>
-            </div>
-          </div>
-          <Button variant="outline" size="sm" onClick={openInNewTab}>
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Nova Aba
-          </Button>
-        </div>
-      </div>
-
-      {/* Conteúdo HTML */}
-      <div className="w-full h-[calc(100vh-80px)]">
-        <iframe
-          srcDoc={htmlContent}
-          className="w-full h-full border-0"
-          title={file.original_name}
-          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-        />
-      </div>
+    <div className="w-full h-screen">
+      <iframe
+        srcDoc={htmlContent}
+        className="w-full h-full border-0"
+        title={file.original_name}
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+      />
     </div>
   );
 };
