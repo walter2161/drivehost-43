@@ -47,11 +47,9 @@ export const HtmlViewer = () => {
     fetchHtmlFiles();
   }, []);
 
-  const getFileUrl = (storagePath: string) => {
-    const { data } = supabase.storage
-      .from('uploads')
-      .getPublicUrl(storagePath);
-    return data.publicUrl;
+  const getFileUrl = (file: FileItem) => {
+    // Gera URL da aplicação React para renderizar o HTML
+    return `${window.location.origin}/view/${file.id}`;
   };
 
   const refreshViewer = () => {
@@ -62,7 +60,7 @@ export const HtmlViewer = () => {
   const openInNewTab = () => {
     const file = htmlFiles.find(f => f.id === selectedFile);
     if (file) {
-      const url = getFileUrl(file.storage_path);
+      const url = getFileUrl(file);
       window.open(url, '_blank');
     }
   };
@@ -120,7 +118,7 @@ export const HtmlViewer = () => {
                 <div className="border rounded-lg overflow-hidden" style={{ height: '70vh' }}>
                   <iframe
                     key={iframeKey}
-                    src={getFileUrl(selectedFileData.storage_path)}
+                    src={getFileUrl(selectedFileData)}
                     className="w-full h-full border-0"
                     title={selectedFileData.original_name}
                     sandbox="allow-same-origin allow-scripts allow-popups allow-forms"

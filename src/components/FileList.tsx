@@ -63,14 +63,19 @@ export const FileList = ({ refreshTrigger }: FileListProps) => {
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const getFileUrl = (storagePath: string, isHtml: boolean = false) => {
-    const { data } = supabase.storage
-      .from('uploads')
-      .getPublicUrl(storagePath);
+  const getFileUrl = (file: FileItem, forSharing: boolean = false) => {
+    const isHtml = isHtmlFile(file);
     
-    // Para arquivos HTML, retornar a URL completa do index.html
-    // O Supabase Storage não serve index.html automaticamente como um servidor web
-    return data.publicUrl;
+    if (isHtml && !forSharing) {
+      // Para visualização de HTML, usa rota interna da aplicação
+      return `${window.location.origin}/view/${file.id}`;
+    } else {
+      // Para download ou arquivos não-HTML, usa URL direta do Supabase
+      const { data } = supabase.storage
+        .from('uploads')
+        .getPublicUrl(file.storage_path);
+      return data.publicUrl;
+    }
   };
 
   const handleDownload = async (file: FileItem) => {
@@ -82,7 +87,8 @@ export const FileList = ({ refreshTrigger }: FileListProps) => {
         .eq('id', file.id);
 
       // Download file
-      const url = getFileUrl(file.storage_path);
+      const { data } = supabase.storage.from('uploads').getPublicUrl(file.storage_path);
+      const url = data.publicUrl;
       const link = document.createElement('a');
       link.href = url;
       link.download = file.original_name;
@@ -100,8 +106,7 @@ export const FileList = ({ refreshTrigger }: FileListProps) => {
 
   const copyToClipboard = async (file: FileItem) => {
     try {
-      const isHtml = isHtmlFile(file);
-      const url = getFileUrl(file.storage_path, isHtml);
+      const url = getFileUrl(file, true); // true = para compartilhamento
       await navigator.clipboard.writeText(url);
       setCopiedUrl(file.id);
       toast.success("URL copiada!");
@@ -119,7 +124,7 @@ export const FileList = ({ refreshTrigger }: FileListProps) => {
   };
 
   const viewHtmlFile = (file: FileItem) => {
-    const url = getFileUrl(file.storage_path, true);
+    const url = getFileUrl(file, false); // false = para visualização interna
     window.open(url, '_blank');
   };
 
