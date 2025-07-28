@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FileUpload } from "@/components/FileUpload";
 import { FileList } from "@/components/FileList";
+import { HtmlViewer } from "@/components/HtmlViewer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CloudUpload } from "lucide-react";
 
 const Index = () => {
@@ -34,17 +36,30 @@ const Index = () => {
           </CardContent>
         </Card>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* Upload Section */}
-          <div>
-            <FileUpload onUploadSuccess={handleUploadSuccess} />
-          </div>
+        <Tabs defaultValue="files" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="files">Gerenciar Arquivos</TabsTrigger>
+            <TabsTrigger value="viewer">Visualizar HTML</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="files" className="space-y-8">
+            <div className="grid md:grid-cols-2 gap-8">
+              {/* Upload Section */}
+              <div>
+                <FileUpload onUploadSuccess={handleUploadSuccess} />
+              </div>
 
-          {/* Files List */}
-          <div>
-            <FileList refreshTrigger={refreshTrigger} />
-          </div>
-        </div>
+              {/* Files List */}
+              <div>
+                <FileList refreshTrigger={refreshTrigger} />
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="viewer">
+            <HtmlViewer />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
